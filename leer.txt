@@ -1,0 +1,31 @@
+Funciones del Servidor:
+El servidor proporciona tres funciones de formateo de cadenas:
+
+Convertir a mayúsculas: Toma una cadena y la convierte completamente en mayúsculas.
+Convertir a minúsculas: Toma una cadena y la convierte completamente en minúsculas.
+Revertir la cadena: Toma una cadena y la invierte, es decir, da la vuelta a los caracteres.
+Tecnología de Comunicaciones:
+Se utiliza el protocolo TCP/IP para la comunicación entre el cliente y el servidor. Esto se debe a que TCP proporciona una conexión confiable y orientada a la conexión entre los extremos, lo que garantiza que los datos se entreguen de manera ordenada y sin errores.
+
+Protocolo del Nivel de Aplicación:
+El protocolo de aplicación utilizado entre el cliente y el servidor implica el intercambio de mensajes en un formato específico. Cada mensaje enviado desde el cliente al servidor tiene la siguiente estructura:
+
+markdown
+Copy code
+mensajeRecibido *|* modoUsoRecibido
+Donde:
+
+mensajeRecibido: Es la cadena de texto que el cliente desea formatear.
+modoUsoRecibido: Es la opción elegida por el cliente para el formateo de la cadena. Puede ser 1 para convertir a mayúsculas, 2 para convertir a minúsculas, o 3 para revertir la cadena.
+El servidor recibe este mensaje, lo procesa según la opción elegida y devuelve el resultado al cliente.
+
+Secuencias Posibles:
+El cliente establece una conexión con el servidor.
+El cliente introduce un mensaje y selecciona una opción de formateo.
+El cliente envía el mensaje y la opción al servidor.
+El servidor recibe y procesa el mensaje.
+El servidor envía el resultado al cliente.
+El cliente recibe y muestra el resultado.
+El cliente cierra la conexión.
+Estas son las posibles secuencias de interacción entre el cliente y el servidor en el contexto de esta aplicación de formateo de cadenas.
+
