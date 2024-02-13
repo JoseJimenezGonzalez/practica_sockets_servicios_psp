@@ -1,9 +1,7 @@
 package servidor;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -14,10 +12,13 @@ public class Servidor extends Thread {
         this.clienteSocket = socket;
     }
 
+    @Override
     public void run() {
         try {
-            BufferedReader entrada = new BufferedReader(new InputStreamReader(clienteSocket.getInputStream()));
-            PrintWriter salida = new PrintWriter(clienteSocket.getOutputStream(), true);
+            System.out.println("Arrancando hilo nuevo");
+            //Crea sus flujos E/S para la comunicacion
+            InputStream entrada = clienteSocket.getInputStream();
+            OutputStream salida = clienteSocket.getOutputStream();
 
             // Lee la cadena y la opción de formateo del cliente
             String cadena = entrada.readLine();
@@ -51,22 +52,25 @@ public class Servidor extends Thread {
         }
     }
 
-    public static void main(String[] args) {
-        try {
-            // Crea un ServerSocket para aceptar conexiones de clientes
-            ServerSocket serverSocket = new ServerSocket(55555);
-            System.out.println("Servidor Formateo de Cadenas iniciado. Esperando conexiones...");
+    public static void main(String[] args) throws IOException {
+        System.out.println("Creando Socket Servidor");
 
-            while (true) {
-                // Acepta una conexión de cliente y crea un hilo para manejarla
-                Socket clienteSocket = serverSocket.accept();
-                System.out.println("Cliente conectado desde " + clienteSocket.getInetAddress());
-                Servidor hiloCliente = new Servidor(clienteSocket);
-                hiloCliente.start();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        ServerSocket server = new ServerSocket();
+        InetSocketAddress dir = new InetSocketAddress("localhost", 55555);
+        server.bind(dir);
+
+        System.out.println("Aceptando conexiones");
+
+        while(server != null)
+        {
+            //Acepta la conexion y crea un subSocket
+            Socket nuevo = server.accept();
+            System.out.println("He recibido una petición");
+
+            Servidor hilo = new Servidor(nuevo);
+            hilo.start();
         }
+        System.out.println("Calculadora terminada");
     }
 }
 

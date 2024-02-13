@@ -1,42 +1,48 @@
 package cliente;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
 
 public class Cliente {
     public static void main(String[] args) {
+        Scanner teclado = new Scanner(System.in);
         try {
-            // Establece la conexión con el servidor
-            Socket socket = new Socket("localhost", 55555);
-            PrintWriter salida = new PrintWriter(socket.getOutputStream(), true);
-            BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            BufferedReader teclado = new BufferedReader(new InputStreamReader(System.in));
+            System.out.println("Creando el socket cliente");
+            Socket cliente = new Socket();
 
-            // Lee la cadena a formatear y la opción del usuario
-            System.out.print("Introduce una cadena de texto: ");
-            String cadena = teclado.readLine();
-            System.out.println("Elije una opción de formateo:");
+            System.out.println("Establecemos conexion");
+            //Le ponemos los datos que hemos introducido en el servidor
+            InetSocketAddress dircServidor = new InetSocketAddress ("localhost", 55555);
+            cliente.connect(dircServidor);
+
+            //Creamos el flujo de salida
+            OutputStream salida = cliente.getOutputStream();
+            InputStream entrada = cliente.getInputStream();
+
+            System.out.println("Ya se puede enviar mensajes");
+            System.out.println("Introduzca el mensaje a enviar");
+            String mensaje = teclado.nextLine();
+            teclado.next();
+            System.out.println("¿Que tratamiento desea realizar al mensaje?");
             System.out.println("1. Convertir a mayúsculas");
             System.out.println("2. Convertir a minúsculas");
             System.out.println("3. Revertir la cadena");
-            System.out.print("Opción: ");
-            String opcion = teclado.readLine();
-
-            // Envía la cadena y la opción al servidor
-            salida.println(cadena);
-            salida.println(opcion);
-
-            // Lee la respuesta del servidor y la muestra al usuario
-            String resultado = entrada.readLine();
-            System.out.println("Resultado del formateo: " + resultado);
-
-            // Cierra los flujos y el socket
-            salida.close();
-            entrada.close();
-            socket.close();
+            String opcion = teclado.next();
+            String mensajeEnviar = mensaje + "*|*" + opcion;
+            //Enviamos la respuesta al servidor
+            salida.write(mensajeEnviar.getBytes());
+            //Recibimos la respuesta del servidor
+            byte[] respuesta = new byte[1024];
+            entrada.read(respuesta);
+            String mensajeRecibido = new String(respuesta).trim();
+            System.out.println("El mensaje recibido es:");
+            System.out.println(mensajeRecibido);
+            System.out.println("Cerrando el socket Cliente");
+            cliente.close();
+            System.out.println("Conexión socket Cliente cerrada");
         } catch (IOException e) {
             e.printStackTrace();
         }
