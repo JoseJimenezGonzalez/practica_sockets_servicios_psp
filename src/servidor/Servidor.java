@@ -4,6 +4,8 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Servidor extends Thread {
     private Socket clienteSocket;
@@ -43,8 +45,10 @@ public class Servidor extends Thread {
             entrada.close();
             salida.close();
             clienteSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ioe) {
+            Logger.getLogger(Servidor.class.getName()).log(Level.SEVERE, null, ioe);
+        }finally {
+            System.out.println("Hilo terminado");
         }
     }
 
