@@ -39,7 +39,6 @@ public class Servidor extends Thread {
                 }
 
             }
-
             // Cierra los flujos y el socket del cliente
             entrada.close();
             salida.close();
@@ -89,7 +88,7 @@ public class Servidor extends Thread {
             Servidor hilo = new Servidor(nuevo);
             hilo.start();
         }
-        System.out.println("Calculadora terminada");
+        System.out.println("Ha finalizado la aplicación");
     }
 }
 
