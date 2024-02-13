@@ -25,7 +25,6 @@ public class Cliente {
             System.out.println("Ya se puede enviar mensajes");
             System.out.println("Introduzca el mensaje a enviar");
             String mensaje = teclado.nextLine();
-            teclado.next();
             System.out.println("¿Que tratamiento desea realizar al mensaje?");
             System.out.println("1. Convertir a mayúsculas");
             System.out.println("2. Convertir a minúsculas");

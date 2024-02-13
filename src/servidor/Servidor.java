@@ -19,29 +19,26 @@ public class Servidor extends Thread {
             //Crea sus flujos E/S para la comunicacion
             InputStream entrada = clienteSocket.getInputStream();
             OutputStream salida = clienteSocket.getOutputStream();
+            //Vamos a recibir el mensaje del cliente
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while((bytesRead = entrada.read(buffer)) != -1){
+                //Se crea mensajeCompleto a partir de los bytes en el array buffer, empezando desde
+                //el primer byte (índice 0) y tomando tantos bytes como indique bytesRead.
+                String mensajeCompleto = new String(buffer, 0, bytesRead).trim();
 
-            // Lee la cadena y la opción de formateo del cliente
-            String cadena = entrada.readLine();
-            String opcion = entrada.readLine();
+                // Dividir la cadena usando el delimitador "*|*"
+                String[] partes = mensajeCompleto.split("\\*\\|\\*");
+                if(partes.length == 2){
+                    //Va bien el programa
+                    String mensajeRecibido = partes[0];
+                    String modoUsoRecibido = partes[1];
+                    respuestaServidor(mensajeRecibido, modoUsoRecibido, salida);
+                }else{
+                    System.out.println("Formato no valido: " + mensajeCompleto);
+                }
 
-            // Realiza el formateo correspondiente según la opción elegida
-            String resultado = "";
-            switch (opcion) {
-                case "1":
-                    resultado = cadena.toUpperCase(); // Convertir a mayúsculas
-                    break;
-                case "2":
-                    resultado = cadena.toLowerCase(); // Convertir a minúsculas
-                    break;
-                case "3":
-                    resultado = new StringBuilder(cadena).reverse().toString(); // Revertir la cadena
-                    break;
-                default:
-                    resultado = "Opción no válida";
             }
-
-            // Envía el resultado al cliente
-            salida.println(resultado);
 
             // Cierra los flujos y el socket del cliente
             entrada.close();
@@ -50,6 +47,28 @@ public class Servidor extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void respuestaServidor(String mensajeRecibido, String modoUsoRecibido, OutputStream salida) throws IOException {
+        String mensajeEnviar = "";
+        if(modoUsoRecibido.equals("1")){
+            //Mayus
+            mensajeEnviar = mensajeRecibido.toUpperCase();
+        }else if(modoUsoRecibido.equals("2")){
+            //Minus
+            mensajeEnviar = mensajeRecibido.toLowerCase();
+        }else if(modoUsoRecibido.equals("3")){
+            //Damos la vuelta
+            // Creamos un objeto StringBuilder con la cadena original
+            StringBuilder builder = new StringBuilder(mensajeRecibido);
+            // Utilizamos el método reverse() para dar la vuelta a la cadena
+            builder.reverse();
+            // Convertimos el StringBuilder de nuevo a String y lo retornamos
+            mensajeEnviar = builder.toString();
+        }else{
+            mensajeEnviar = "No se reconoce esa opcion";
+        }
+        salida.write(mensajeEnviar.getBytes());
     }
 
     public static void main(String[] args) throws IOException {
